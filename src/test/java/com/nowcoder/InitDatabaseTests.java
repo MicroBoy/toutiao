@@ -1,12 +1,10 @@
 package com.nowcoder;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.nowcoder.dao.CommentDAO;
 import com.nowcoder.dao.LoginTicketDAO;
 import com.nowcoder.dao.NewsDAO;
 import com.nowcoder.dao.UserDAO;
 import com.nowcoder.model.*;
-import com.nowcoder.service.CommentService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

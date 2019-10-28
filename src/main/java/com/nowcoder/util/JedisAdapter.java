@@ -1,13 +1,15 @@
 package com.nowcoder.util;
 
 import com.alibaba.fastjson.JSON;
-import com.nowcoder.controller.IndexController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import redis.clients.jedis.*;
+
+import redis.clients.jedis.BinaryClient;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Tuple;
 
 import java.util.List;
 
@@ -18,6 +20,11 @@ import java.util.List;
 public class JedisAdapter implements InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(JedisAdapter.class);
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        //jedis = new Jedis("localhost");
+        pool = new JedisPool("172.28.52.11", 6379);
+    }
 
     public static void print(int index, Object obj) {
         System.out.println(String.format("%d,%s", index, obj.toString()));
@@ -156,12 +163,6 @@ public class JedisAdapter implements InitializingBean {
 
     private Jedis jedis = null;
     private JedisPool pool = null;
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        //jedis = new Jedis("localhost");
-        pool = new JedisPool("localhost", 6379);
-    }
 
     public String get(String key) {
         Jedis jedis = null;
