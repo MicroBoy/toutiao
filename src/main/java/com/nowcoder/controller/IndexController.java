@@ -1,18 +1,13 @@
 package com.nowcoder.controller;
 
-import com.nowcoder.aspect.LogAspect;
 import com.nowcoder.model.User;
 import com.nowcoder.service.ToutiaoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.Banner;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -22,35 +17,38 @@ import java.util.*;
 
 /**
  * Created by nowcoder on 2016/6/26.
+ *
+ *      前后端简单展示的测试——学习用的
  */
-//@Controller
+@Controller
+@RequestMapping(path = "/test")
 public class IndexController {
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
     @Autowired
     private ToutiaoService toutiaoService;
 
-    @RequestMapping(path = {"/", "/index"}, method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(path = {"/"}, method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public String index(HttpSession session) {
+    public String index(HttpSession session) {  //session会话下可以保证Cookie、JSESSIONID不变化，记录用户
         logger.info("Visit Index");
-        return "Hello NowCoder," + session.getAttribute("msg")
-                + "<br> Say:" + toutiaoService.say();
+        return "Hello NowCoder," + session.getAttribute("msg") + "<br> Say:" + toutiaoService.say();
     }
 
     @RequestMapping(value = {"/profile/{groupId}/{userId}"})
     @ResponseBody
     public String profile(@PathVariable("groupId") String groupId,
-                          @PathVariable("userId") int userId,
+                          @PathVariable("userId") int userId,//路径变量
                           @RequestParam(value = "type", defaultValue = "1") int type,
-                          @RequestParam(value = "key", defaultValue = "nowcoder") String key) {
+                          @RequestParam(value = "key", defaultValue = "nowcoder") String key) { //请求参数，默认
         return String.format("GID{%s},UID{%d},TYPE{%d},KEY{%s}", groupId, userId, type, key);
     }
 
     @RequestMapping(value = {"/vm"})
     public String news(Model model) {
         model.addAttribute("value1", "vv1");
-        List<String> colors = Arrays.asList(new String[]{"RED", "GREEN", "BLUE"});
+
+        List<String> colors = Arrays.asList(new String[] {"RED", "GREEN", "BLUE"});//将数组转换成列表
 
         Map<String, String> map = new HashMap<String, String>();
         for (int i = 0; i < 4; ++i) {
@@ -70,13 +68,13 @@ public class IndexController {
                           HttpServletResponse response,
                           HttpSession session) {
         StringBuilder sb = new StringBuilder();
-        Enumeration<String> headerNames = request.getHeaderNames();
+        Enumeration<String> headerNames = request.getHeaderNames();//获取request headers中的信息
         while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
             sb.append(name + ":" + request.getHeader(name) + "<br>");
         }
 
-        for (Cookie cookie : request.getCookies()) {
+        for (Cookie cookie : request.getCookies()) { //获取所有种类的cookie
             sb.append("Cookie:");
             sb.append(cookie.getName());
             sb.append(":");
