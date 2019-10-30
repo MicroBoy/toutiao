@@ -5,6 +5,8 @@ import java.util.Map;
 
 /**
  * Created by nowcoder on 2016/7/16.
+ *
+ *      触发时间模板——登录事件、点赞事件
  */
 public class EventModel {
     private EventType type;

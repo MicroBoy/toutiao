@@ -20,12 +20,16 @@ import java.util.Map;
 
 /**
  * Created by nowcoder on 2016/7/16.
+ *
+ *     从Redis消息队列中拉取事件处理
  */
 @Service
 public class EventConsumer implements InitializingBean, ApplicationContextAware {
     private static final Logger logger = LoggerFactory.getLogger(EventConsumer.class);
 
     private Map<EventType, List<EventHandler>> config = new HashMap<EventType, List<EventHandler>>();
+
+    //Spring容器,生成Bean实例的工厂,并管理容器中的Bean;  一般会称BeanFactory为IoC容器，而称ApplicationContext为应用上下文
     private ApplicationContext applicationContext;
 
     @Autowired
@@ -33,26 +37,37 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Map<String, EventHandler> beans = applicationContext.getBeansOfType(EventHandler.class);
+
+        //获取IOC容器里的Bean：事件对象
+        Map<String, EventHandler> beans = applicationContext.getBeansOfType(EventHandler.class);//spring容器启动后，
+
         if (beans != null) {
             for (Map.Entry<String, EventHandler> entry : beans.entrySet()) {
+
                 List<EventType> eventTypes = entry.getValue().getSupportEventTypes();
+
                 for (EventType type : eventTypes) {
                     if (!config.containsKey(type)) {
                         config.put(type, new ArrayList<EventHandler>());
                     }
-                    config.get(type).add(entry.getValue());
+                    config.get(type).add(entry.getValue());  //得到 {事件：处理方法} 的键值对
                 }
             }
         }
 
         Thread thread = new Thread(new Runnable() {
+
             @Override
             public void run() {
                 while (true) {
+
                     String key = RedisKeyUtil.getEventQueueKey();
-                    List<String> events = jedisAdapter.brpop(0, key);
+
+                    List<String> events = jedisAdapter.brpop(0, key); //消费Redis消息队列
+
                     for (String message : events) {
+
+                        //此线程只处理点赞事件
                         if (message.equals(key)) {
                             continue;
                         }
@@ -63,6 +78,7 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
                             continue;
                         }
 
+                        //获取事件类型，做对应处理
                         for (EventHandler handler : config.get(eventModel.getType())) {
                             handler.doHandle(eventModel);
                         }

@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.*;
 
 /**
  * Created by nowcoder on 2016/7/2.
+ *
+ *  操作MySQL数据库方式：xml配置文件 或 注解@Insert
  */
 @Mapper
 public interface LoginTicketDAO {

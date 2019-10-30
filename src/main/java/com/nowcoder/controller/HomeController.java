@@ -22,6 +22,7 @@ import java.util.List;
  *  网站主页显示
  */
 @Controller
+@RequestMapping(path = "/toutiao")
 public class HomeController {
     @Autowired
     NewsService newsService;

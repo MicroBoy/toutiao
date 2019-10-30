@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * Created by nowcoder on 2016/6/26.
  *
- *      前后端简单展示的测试——学习用的
+ *      前后端简单展示的测试——与课题呈现无关
  */
 @Controller
 @RequestMapping(path = "/test")

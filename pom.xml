@@ -85,6 +85,27 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<!--注意imageName一定要是符合正则[a-z0-9-_.]的，否则构建不会成功-->
+					<imageName>hub.komect.com:/failybrain/toutiao:v1</imageName>
+					<!-- 指定了Dockfile的目录,所以需要在项目的src/main下创建一个docker目录，并在其目录中配置Dockerfile文件 -->
+					<!--<dockerDirectory>${project.basedir}/src/main/resources/docker</dockerDirectory>-->
+					<dockerDirectory>${project.basedir}</dockerDirectory>
+					<skipDockerBuild>false</skipDockerBuild>
+					<!-- resources的内容会复制  dockerDirectory(也就是构建上下文)中 -->
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	

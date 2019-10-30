@@ -36,7 +36,7 @@ public class ToutiaoUtil {
         JSONObject json = new JSONObject();
         json.put("code", code);
         json.put("msg", msg);
-        return json.toJSONString();
+        return json.toJSONString();  // {"code":0,"msg":"success"}
     }
 
     public static String getJSONString(int code, Map<String, Object> map) {

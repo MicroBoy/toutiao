@@ -25,7 +25,15 @@ public class UserService {
     @Autowired
     private LoginTicketDAO loginTicketDAO;
 
+    /**
+     *      用户注册
+     * @param username
+     * @param password
+     * @return
+     */
     public Map<String, Object> register(String username, String password) {
+
+        //用map记录异常
         Map<String, Object> map = new HashMap<String, Object>();
         if (StringUtils.isBlank(username)) {
             map.put("msgname", "用户名不能为空");
@@ -44,7 +52,7 @@ public class UserService {
             return map;
         }
 
-        // 密码强度
+        // 系统自动设置信息
         user = new User();
         user.setName(username);
         user.setSalt(UUID.randomUUID().toString().substring(0, 5));
@@ -53,13 +61,18 @@ public class UserService {
         user.setPassword(ToutiaoUtil.MD5(password+user.getSalt()));
         userDAO.addUser(user);
 
-        // 登陆
+        // 注册成功即登陆
         String ticket = addLoginTicket(user.getId());
         map.put("ticket", ticket);
         return map;
     }
 
-
+    /**
+     *      用户登录
+     * @param username
+     * @param password
+     * @return
+     */
     public Map<String, Object> login(String username, String password) {
         Map<String, Object> map = new HashMap<String, Object>();
         if (StringUtils.isBlank(username)) {
@@ -92,14 +105,17 @@ public class UserService {
     }
 
     private String addLoginTicket(int userId) {
+
         LoginTicket ticket = new LoginTicket();
+
         ticket.setUserId(userId);
         Date date = new Date();
         date.setTime(date.getTime() + 1000*3600*24);
-        ticket.setExpired(date);
+        ticket.setExpired(date); //此会话一天后过期
         ticket.setStatus(0);
         ticket.setTicket(UUID.randomUUID().toString().replaceAll("-", ""));
         loginTicketDAO.addTicket(ticket);
+
         return ticket.getTicket();
     }
 
@@ -107,6 +123,10 @@ public class UserService {
         return userDAO.selectById(id);
     }
 
+    /**
+     *      用户退出
+     * @param ticket
+     */
     public void logout(String ticket) {
         loginTicketDAO.updateStatus(ticket, 1);
     }
