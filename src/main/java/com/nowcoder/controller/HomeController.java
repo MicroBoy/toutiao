@@ -22,7 +22,6 @@ import java.util.List;
  *  网站主页显示
  */
 @Controller
-@RequestMapping(path = "/toutiao")
 public class HomeController {
     @Autowired
     NewsService newsService;
@@ -78,7 +77,7 @@ public class HomeController {
      * @param pop
      * @return
      */
-    @RequestMapping(path = {"/index"}, method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(path = {"/", "/index"}, method = {RequestMethod.GET, RequestMethod.POST})
     public String index(Model model,
                         @RequestParam(value = "pop", defaultValue = "0",required = false) int pop) {
 

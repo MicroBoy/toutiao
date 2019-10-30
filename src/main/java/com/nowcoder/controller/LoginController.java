@@ -20,7 +20,6 @@ import java.util.Map;
  * Created by nowcoder on 2016/7/2.
  */
 @Controller
-@RequestMapping(path = "/toutiao")
 public class LoginController {
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -30,7 +29,7 @@ public class LoginController {
     @Autowired
     EventProducer eventProducer;
 
-    @RequestMapping(path = {"/reg"}, method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(path = {"/reg/"}, method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String reg(Model model,
                       @RequestParam("username") String username,
@@ -61,7 +60,7 @@ public class LoginController {
         }
     }
 
-    @RequestMapping(path = {"/login"}, method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(path = {"/login/"}, method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public String login(Model model,
                         @RequestParam("username") String username,
@@ -97,7 +96,7 @@ public class LoginController {
         }
     }
 
-    @RequestMapping(path = {"/logout"}, method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(path = {"/logout/"}, method = {RequestMethod.GET, RequestMethod.POST})
     public String logout(@CookieValue("ticket") String ticket) {
         userService.logout(ticket);
         return "redirect:/";
