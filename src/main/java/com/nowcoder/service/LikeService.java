@@ -23,12 +23,13 @@ public class LikeService {
     }
 
     public long like(int userId, int entityType, int entityId) {
-        // 在喜欢集合里增加
+        // 在当前资讯Id的LIKE对应redis的key中增加该用户
         String likeKey = RedisKeyUtil.getLikeKey(entityId, entityType);
         jedisAdapter.sadd(likeKey, String.valueOf(userId));
-        // 从反对里删除
+        // 在当前资讯Id的DISLIKE对应redis的key中删除该用户
         String disLikeKey = RedisKeyUtil.getDisLikeKey(entityId, entityType);
         jedisAdapter.srem(disLikeKey, String.valueOf(userId));
+
         return jedisAdapter.scard(likeKey);
     }
 

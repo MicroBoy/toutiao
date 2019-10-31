@@ -18,9 +18,6 @@ target/
 *.ipr
 .mvn
 *.DS_Store
-mvnw
-mvnw.cmd
-.gitignore
 
 ### NetBeans ###
 /nbproject/private/

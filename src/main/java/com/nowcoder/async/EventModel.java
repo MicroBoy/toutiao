@@ -9,17 +9,18 @@ import java.util.Map;
  *      触发时间模板——登录事件、点赞事件
  */
 public class EventModel {
-    private EventType type;
-    private int actorId;
-    private int entityType;
-    private int entityId;
-    private int entityOwnerId;
+
+    private EventType type;    //事件类型——点赞、登录、登录、评论
+    private int actorId;       //事件触发者
+
+    private int entityType;    //对象类型——资讯、别人的评论
+    private int entityId;      //对象在数据库中的id
+    private int entityOwnerId; //对象的所有者
     private Map<String, String> exts = new HashMap<String, String>();
 
     public String getExt(String key) {
         return exts.get(key);
     }
-
     public EventModel setExt(String key, String value) {
         exts.put(key, value);
         return this;
@@ -28,9 +29,7 @@ public class EventModel {
     public EventModel(EventType type) {
         this.type = type;
     }
-
-    public EventModel() {
-
+    public EventModel(){
     }
 
     public EventType getType() {
