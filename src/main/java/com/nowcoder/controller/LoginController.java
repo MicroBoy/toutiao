@@ -25,7 +25,6 @@ public class LoginController {
 
     @Autowired
     UserService userService;
-
     @Autowired
     EventProducer eventProducer;
 
