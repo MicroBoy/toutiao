@@ -22,6 +22,8 @@ import java.util.List;
 
 /**
  * Created by nowcoder on 2016/7/2.
+ *
+ *      资讯
  */
 @Controller
 public class NewsController {
@@ -46,16 +48,24 @@ public class NewsController {
 
     @RequestMapping(path = {"/news/{newsId}"}, method = {RequestMethod.GET})
     public String newsDetail(@PathVariable("newsId") int newsId, Model model) {
+
+        //仅仅获取到newsId这条一条信息
         News news = newsService.getById(newsId);
+
         if (news != null) {
+
             int localUserId = hostHolder.getUser() != null ? hostHolder.getUser().getId() : 0;
+
+            //若登录，获取对该资讯的态度
             if (localUserId != 0) {
-                model.addAttribute("like", likeService.getLikeStatus(localUserId, EntityType.ENTITY_NEWS, news.getId()));
+                model.addAttribute("like", likeService.getLikeStatus(localUserId, EntityType.ENTITY_NEWS, news.getId())); //返回给前端 +1或-1或0
             } else {
                 model.addAttribute("like", 0);
             }
+
             // 评论
             List<Comment> comments = commentService.getCommentsByEntity(news.getId(), EntityType.ENTITY_NEWS);
+
             List<ViewObject> commentVOs = new ArrayList<ViewObject>();
             for (Comment comment : comments) {
                 ViewObject vo = new ViewObject();
@@ -75,7 +85,7 @@ public class NewsController {
                              @RequestParam("content") String content) {
         try {
             content = HtmlUtils.htmlEscape(content);
-            // 过滤content
+
             Comment comment = new Comment();
             comment.setUserId(hostHolder.getUser().getId());
             comment.setContent(content);
@@ -101,9 +111,9 @@ public class NewsController {
     public void getImage(@RequestParam("name") String imageName,
                          HttpServletResponse response) {
         try {
-            response.setContentType("image/jpeg");
-            StreamUtils.copy(new FileInputStream(new
-                    File(ToutiaoUtil.IMAGE_DIR + imageName)), response.getOutputStream());
+            response.setContentType("image/jpeg"); //设置图片格式
+
+            StreamUtils.copy(new FileInputStream(new File(ToutiaoUtil.IMAGE_DIR + imageName)), response.getOutputStream());
         } catch (Exception e) {
             logger.error("读取图片错误" + imageName + e.getMessage());
         }
@@ -113,11 +123,14 @@ public class NewsController {
     @ResponseBody
     public String uploadImage(@RequestParam("file") MultipartFile file) {
         try {
+            //本地图片存储
             String fileUrl = newsService.saveImage(file);
+            //七牛云服务器存储
             //String fileUrl = qiniuService.saveImage(file);
             if (fileUrl == null) {
                 return ToutiaoUtil.getJSONString(1, "上传图片失败");
             }
+
             return ToutiaoUtil.getJSONString(0, fileUrl);
         } catch (Exception e) {
             logger.error("上传图片失败" + e.getMessage());

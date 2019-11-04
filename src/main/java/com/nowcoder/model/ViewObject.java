@@ -6,6 +6,8 @@ import java.util.Objects;
 
 /**
  * Created by rainday on 16/6/30.
+ *
+ * 将后端的信息打包成map放入List中传给前端代码调用
  */
 public class ViewObject {
 

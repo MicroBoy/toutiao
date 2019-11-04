@@ -40,18 +40,20 @@ public class NewsService {
     }
 
     public String saveImage(MultipartFile file) throws IOException {
-        int dotPos = file.getOriginalFilename().lastIndexOf(".");
+        int dotPos = file.getOriginalFilename().lastIndexOf("."); //最后一个点的位置
         if (dotPos < 0) {
             return null;
         }
-        String fileExt = file.getOriginalFilename().substring(dotPos + 1).toLowerCase();
+        String fileExt = file.getOriginalFilename().substring(dotPos + 1).toLowerCase();//获取文件扩展名
         if (!ToutiaoUtil.isFileAllowed(fileExt)) {
             return null;
         }
 
         String fileName = UUID.randomUUID().toString().replaceAll("-", "") + "." + fileExt;
-        Files.copy(file.getInputStream(), new File(ToutiaoUtil.IMAGE_DIR + fileName).toPath(),
-                StandardCopyOption.REPLACE_EXISTING);
+
+        // 将图片源文件 复制到 目标文件(格式化)里
+        Files.copy(file.getInputStream(), new File(ToutiaoUtil.IMAGE_DIR + fileName).toPath(), StandardCopyOption.REPLACE_EXISTING);
+
         return ToutiaoUtil.TOUTIAO_DOMAIN + "image?name=" + fileName;
     }
 

@@ -23,6 +23,8 @@ import java.util.List;
 
 /**
  * Created by nowcoder on 2016/7/9.
+ *
+ *      站内信
  */
 @Controller
 public class MessageController {

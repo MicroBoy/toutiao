@@ -14,12 +14,14 @@ public class LikeService {
     JedisAdapter jedisAdapter;
 
     public int getLikeStatus(int userId, int entityType, int entityId) {
-        String likeKey = RedisKeyUtil.getLikeKey(entityId, entityType);
+
+        String likeKey = RedisKeyUtil.getLikeKey(entityId, entityType); //LIKE:1:newsId
         if(jedisAdapter.sismember(likeKey, String.valueOf(userId))) {
             return 1;
         }
         String disLikeKey = RedisKeyUtil.getDisLikeKey(entityId, entityType);
-        return jedisAdapter.sismember(disLikeKey, String.valueOf(userId)) ? -1 : 0;
+
+        return jedisAdapter.sismember(disLikeKey, String.valueOf(userId)) ? -1 : 0;//-1不喜欢，0未评价
     }
 
     public long like(int userId, int entityType, int entityId) {
