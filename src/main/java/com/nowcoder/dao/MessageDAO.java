@@ -31,5 +31,6 @@ public interface MessageDAO {
 
     @Select({"select ", INSERT_FIELDS, " ,count(id) as id from ( select * from ", TABLE_NAME, " where from_id=#{userId} or to_id=#{userId} order by id desc) tt group by conversation_id  order by created_date desc limit #{offset}, #{limit}"})
     List<Message> getConversationList(@Param("userId") int userId,
-                                      @Param("offset") int offset, @Param("limit") int limit);
+                                      @Param("offset") int offset,
+                                      @Param("limit") int limit);
 }

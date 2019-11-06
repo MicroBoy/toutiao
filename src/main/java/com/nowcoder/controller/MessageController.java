@@ -1,5 +1,6 @@
 package com.nowcoder.controller;
 
+import com.nowcoder.common.Constant;
 import com.nowcoder.dao.MessageDAO;
 import com.nowcoder.model.*;
 import com.nowcoder.service.MessageService;
@@ -39,19 +40,24 @@ public class MessageController {
     @Autowired
     HostHolder hostHolder;
 
+    //收到的信息列表
     @RequestMapping(path = {"/msg/list"}, method = {RequestMethod.GET})
     public String conversationDetail(Model model) {
         try {
             int localUserId = hostHolder.getUser().getId();
+
             List<ViewObject> conversations = new ArrayList<ViewObject>();
-            List<Message> conversationList = messageService.getConversationList(localUserId, 0, 10);
+            List<Message> conversationList = messageService.getConversationList(localUserId, 0, Constant.MESSAGE_LENGTH);
+
             for (Message msg : conversationList) {
                 ViewObject vo = new ViewObject();
                 vo.set("conversation", msg);
-                int targetId = msg.getFromId() == localUserId ? msg.getToId() : msg.getFromId();
+                // 判断交流对象user
+                int targetId = msg.getFromId() == localUserId ? msg.getToId() : msg.getFromId(); //from发信者，to收信者
                 User user = userService.getUser(targetId);
+
                 vo.set("user", user);
-                vo.set("unread", messageService.getConvesationUnreadCount(localUserId, msg.getConversationId()));
+                vo.set("unread", messageService.getConvesationUnreadCount(localUserId, msg.getConversationId())); // 统计当前用户收到的未读信息:has_read=0
                 conversations.add(vo);
             }
             model.addAttribute("conversations", conversations);
@@ -61,15 +67,19 @@ public class MessageController {
         return "letter";
     }
 
+    //某对用户交流的详细内容
     @RequestMapping(path = {"/msg/detail"}, method = {RequestMethod.GET})
     public String conversationDetail(Model model, @Param("conversationId") String conversationId) {
+
         try {
-            List<Message> conversationList = messageService.getConversationDetail(conversationId, 0, 10);
+            //获取前几条交流信息
+            List<Message> conversationList = messageService.getConversationDetail(conversationId, 0, Constant.CONVERSATION_LENGTH);
             List<ViewObject> messages = new ArrayList<>();
             for (Message msg : conversationList) {
                 ViewObject vo = new ViewObject();
                 vo.set("message", msg);
-                User user = userService.getUser(msg.getFromId());
+
+                User user = userService.getUser(msg.getFromId());  //获取发信者
                 if (user == null) {
                     continue;
                 }
@@ -85,6 +95,7 @@ public class MessageController {
     }
 
 
+    //发信息
     @RequestMapping(path = {"/msg/addMessage"}, method = {RequestMethod.POST})
     @ResponseBody
     public String addMessage(@RequestParam("fromId") int fromId,
@@ -98,6 +109,7 @@ public class MessageController {
             msg.setCreatedDate(new Date());
             //msg.setConversationId(fromId < toId ? String.format("%d_%d", fromId, toId) : String.format("%d_%d", toId, fromId));
             messageService.addMessage(msg);
+
             return ToutiaoUtil.getJSONString(msg.getId());
         } catch (Exception e) {
             logger.error("增加评论失败" + e.getMessage());

@@ -1,5 +1,6 @@
 package com.nowcoder.controller;
 
+import com.nowcoder.common.Constant;
 import com.nowcoder.model.EntityType;
 import com.nowcoder.model.HostHolder;
 import com.nowcoder.model.News;
@@ -81,7 +82,7 @@ public class HomeController {
     public String index(Model model,
                         @RequestParam(value = "pop", defaultValue = "0",required = false) int pop) {
 
-        model.addAttribute("vos", getNews(0, 0, 10));//NewsDAO.xml中配置了if(userId != 0)，才会精确查询，否则查询所有
+        model.addAttribute("vos", getNews(0, 0, Constant.HOME_NEWS_LENGTH));//NewsDAO.xml中配置了if(userId != 0)，才会精确查询，否则查询所有
 
         if (hostHolder.getUser() != null) {
             pop = 0;
@@ -99,7 +100,7 @@ public class HomeController {
      */
     @RequestMapping(path = {"/user/{userId}"}, method = {RequestMethod.GET, RequestMethod.POST})
     public String userIndex(Model model, @PathVariable("userId") int userId) {
-        model.addAttribute("vos", getNews(userId, 0, 10));
+        model.addAttribute("vos", getNews(userId, 0, Constant.HOME_NEWS_LENGTH));
         return "home";
     }
 
